@@ -1,70 +1,127 @@
-# Getting Started with Create React App
+# 🎓 CampusConnect
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A comprehensive AI-powered campus community platform that revolutionizes student interaction, knowledge sharing, and campus engagement.
 
-## Available Scripts
+## ✨ Features
 
-In the project directory, you can run:
+### 🤖 AI Features (Powered by Gemini)
+- ✅ **AI Auto Moderation** - Automatically detects spam, toxicity, and inappropriate content
+- ✅ **AI Auto Tags** - Automatically categorizes posts (Notes, Doubts, Opportunities, Events, General)
+- ✅ **AI Summary** - Generates short summaries for long posts
 
-### `npm start`
+### 🎨 UI/UX Features
+- ✅ **Dark Spooky Theme** - Halloween-inspired dark UI with glowing effects
+- ✅ **Animations** - Smooth hover effects, floating elements, and ghost animations
+- ✅ **Responsive Design** - Works perfectly on mobile, tablet, and desktop
+- ✅ **Modern Design** - Clean, minimal, and professional
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 📱 Core Features
+- ✅ **Post Feed** - Browse all posts with search and category filters
+- ✅ **Create Posts** - Easy post creation with category selection
+- ✅ **Post Details** - View full posts with comments
+- ✅ **Comments System** - Add comments to any post
+- ✅ **Like System** - Upvote posts you find helpful
+- ✅ **User Profiles** - Simple username-based authentication
+- ✅ **Search** - Search posts by title or content
+- ✅ **Categories** - Filter by Notes, Doubts, Opportunities, Events, General
+- ✅ **Flagged Content** - Visual indicators for moderated content
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🚀 Tech Stack
 
-### `npm test`
+- **Frontend**: React 19 + React Router
+- **Backend**: Supabase (Serverless)
+- **Database**: Supabase PostgreSQL
+- **AI**: Google Gemini API
+- **Styling**: Custom CSS with animations
+- **Deployment**: Netlify
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 📦 Installation
 
-### `npm run build`
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. Set up Supabase:
+   - Go to your Supabase project
+   - Run the SQL commands from `SUPABASE_SETUP.md`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+4. Configure environment variables:
+   - Add your Gemini API key to `.env`:
+   ```
+   REACT_APP_GEMINI_API_KEY=your_api_key_here
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+5. Start the development server:
+   ```bash
+   npm start
+   ```
 
-### `npm run eject`
+## 🎯 Pages
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. **Home** (`/`) - Browse all posts with search and filters
+2. **Create Post** (`/create`) - Create new posts
+3. **Post Detail** (`/post/:id`) - View post with comments
+4. **Profile** (`/profile`) - View your posts and profile
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🔑 How to Use
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. **Login** - Click "Login" and enter any username (no password needed)
+2. **Create Post** - Go to "Create Post" and write your content
+3. **Browse** - Use search and category filters to find posts
+4. **Interact** - Like posts and add comments
+5. **AI Magic** - Posts are automatically moderated, tagged, and summarized
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🎃 Halloween Theme
 
-## Learn More
+- Spooky dark background with purple gradients
+- Glowing red accents (#ff6b6b)
+- Creepster font for headings
+- Floating animations
+- Ghost effects on flagged content
+- Pulsing warnings
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🛠️ Features Checklist
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+| Feature | Status | Importance |
+|---------|--------|------------|
+| AI Auto Moderation | ✅ Done | ⭐⭐⭐⭐⭐ |
+| AI Auto Tags | ✅ Done | ⭐⭐⭐⭐ |
+| AI Summary | ✅ Done | ⭐⭐⭐⭐ |
+| Dark Spooky UI | ✅ Done | ⭐⭐⭐⭐⭐ |
+| Animations | ✅ Done | ⭐⭐⭐⭐ |
+| Mobile Responsive | ✅ Done | ⭐⭐⭐⭐ |
+| Post Feed | ✅ Done | ⭐⭐⭐⭐⭐ |
+| Comments | ✅ Done | ⭐⭐⭐⭐ |
+| Likes | ✅ Done | ⭐⭐⭐ |
+| Search | ✅ Done | ⭐⭐⭐⭐ |
+| Categories | ✅ Done | ⭐⭐⭐⭐ |
+| User Profiles | ✅ Done | ⭐⭐⭐ |
 
-### Code Splitting
+## 📝 Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- The app uses simple username-based auth (no passwords) for hackathon simplicity
+- AI features work with or without Gemini API key (fallback to rule-based)
+- All data is stored in Supabase
+- Fully serverless architecture
 
-### Analyzing the Bundle Size
+## 🎬 Demo Tips
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. Show the spooky UI and animations
+2. Demonstrate AI moderation by posting content with words like "spam" or "fake"
+3. Show AI auto-tagging by creating posts about different topics
+4. Highlight the responsive design
+5. Show the search and filter functionality
 
-### Making a Progressive Web App
+## 🏆 Hackathon Ready
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+This project is optimized for hackathon judging with:
+- ✅ Complete AI integration
+- ✅ Polished UI/UX
+- ✅ Unique Halloween theme
+- ✅ Full functionality
+- ✅ Mobile responsive
+- ✅ Clean code structure
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Good luck! 🎃👻
