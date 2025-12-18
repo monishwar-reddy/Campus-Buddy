@@ -12,19 +12,10 @@ function Flashcards() {
   const [flipped, setFlipped] = useState(false)
 
   const generateFlashcards = async () => {
-    if (!content.trim()) {
-      alert('Please enter some content')
-      return
-    }
-
-    if (!user) {
-      alert('Please login first')
-      return
-    }
-
-    if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your_gemini_api_key_here') {
-      alert('Please add your Gemini API key to .env file')
-      return
+    if (!content.trim()) { alert('Please enter some content'); return }
+    if (!user) { alert('Please login first'); return }
+    if (!GEMINI_API_KEY) {
+      alert('AI study assistant is warming up... try again!'); return
     }
 
     setLoading(true)
@@ -50,21 +41,12 @@ ${content}`
         })
       })
 
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.status} - Check your API key`)
-      }
-
+      if (!response.ok) throw new Error(`API Error: ${response.status}`)
       const data = await response.json()
       const result = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
-      
-      console.log('AI Response:', result)
-      
-      // Parse flashcards - try multiple formats
+
       let cards = []
-      
-      // Format 1: Q: question | A: answer
       const lines = result.split('\n').filter(line => line.trim())
-      
       for (let line of lines) {
         if (line.includes('Q:') && line.includes('A:')) {
           const parts = line.split('|')
@@ -74,16 +56,6 @@ ${content}`
               answer: parts[1].replace(/A:|Answer:/gi, '').trim()
             })
           }
-        } else if (line.match(/^\d+\./)) {
-          // Format 2: 1. Question text
-          const question = line.replace(/^\d+\./, '').trim()
-          const nextLineIndex = lines.indexOf(line) + 1
-          if (nextLineIndex < lines.length) {
-            const answer = lines[nextLineIndex].replace(/^-|Answer:/gi, '').trim()
-            if (question && answer) {
-              cards.push({ question, answer })
-            }
-          }
         }
       }
 
@@ -92,96 +64,105 @@ ${content}`
         setCurrentCard(0)
         setFlipped(false)
       } else {
-        alert('Could not generate flashcards. The AI response format was unexpected. Try different content or simpler text.')
-        console.error('Failed to parse:', result)
+        alert('Could not generate flashcards. Try different content.')
       }
     } catch (error) {
-      alert(`Error: ${error.message}\n\nPlease check your API key and internet connection.`)
-      console.error('Flashcards Error:', error)
+      alert(`Error: ${error.message}`)
     } finally {
       setLoading(false)
     }
   }
 
-  const nextCard = () => {
-    setFlipped(false)
-    setCurrentCard((prev) => (prev + 1) % flashcards.length)
-  }
-
-  const prevCard = () => {
-    setFlipped(false)
-    setCurrentCard((prev) => (prev - 1 + flashcards.length) % flashcards.length)
-  }
+  const nextCard = () => { setFlipped(false); setCurrentCard((prev) => (prev + 1) % flashcards.length) }
+  const prevCard = () => { setFlipped(false); setCurrentCard((prev) => (prev - 1 + flashcards.length) % flashcards.length) }
 
   return (
-    <div className="feature-page">
-      <div className="feature-header">
-        <h1>📇 AI-Generated Flashcards</h1>
-        <p>Convert any content into study flashcards!</p>
-      </div>
+    <div className="feature-page christmas-feature">
+      <div className="page-background" style={{ backgroundImage: 'url(/images/features-bg.jpg)' }}></div>
+      <div className="page-overlay"></div>
 
-      {flashcards.length === 0 ? (
-        <div className="flashcard-input">
-          <h3>Enter Content to Convert</h3>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Paste your tutorial, notes, or any learning content here..."
-            rows="15"
-          />
-          <button 
-            className="generate-btn"
-            onClick={generateFlashcards}
-            disabled={loading}
-          >
-            {loading ? 'Generating...' : '✨ Generate Flashcards'}
-          </button>
+      <div className="container" style={{ position: 'relative', zIndex: 10, paddingTop: '4rem' }}>
+        <div className="feature-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <h1 style={{ fontSize: '4rem', fontFamily: "'Mountains of Christmas', cursive", color: '#ffd700' }}>
+            📇 Winter Flashcards
+          </h1>
+          <p style={{ fontSize: '1.2rem', color: '#fff' }}>Icy efficient study tools for your winter exams!</p>
         </div>
-      ) : (
-        <div className="flashcard-viewer">
-          <div className="flashcard-counter">
-            Card {currentCard + 1} of {flashcards.length}
-          </div>
 
-          <div 
-            className={`flashcard ${flipped ? 'flipped' : ''}`}
-            onClick={() => setFlipped(!flipped)}
-          >
-            <div className="flashcard-front">
-              <div className="card-label">Question</div>
-              <div className="card-text">
-                {flashcards[currentCard].question}
-              </div>
-              <div className="card-hint">Click to flip</div>
-            </div>
-            <div className="flashcard-back">
-              <div className="card-label">Answer</div>
-              <div className="card-text">
-                {flashcards[currentCard].answer}
-              </div>
-              <div className="card-hint">Click to flip back</div>
-            </div>
-          </div>
-
-          <div className="flashcard-controls">
-            <button onClick={prevCard}>← Previous</button>
-            <button onClick={() => setFlipped(!flipped)}>
-              {flipped ? 'Show Question' : 'Show Answer'}
+        {flashcards.length === 0 ? (
+          <div className="glass-card-3d" style={{ maxWidth: '700px', margin: '0 auto', padding: '3rem', background: 'rgba(255,255,255,0.05)' }}>
+            <h3 style={{ marginBottom: '1.5rem', color: '#ffd700' }}>Enter Content to Convert</h3>
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Paste your tutorial, notes, or any learning content here..."
+              rows="12"
+              style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '1.5rem', borderRadius: '15px', resize: 'none', outline: 'none', marginBottom: '2rem' }}
+            />
+            <button
+              className="btn-christmas-premium"
+              onClick={generateFlashcards}
+              disabled={loading}
+              style={{ width: '100%' }}
+            >
+              {loading ? 'Frosted Magic Loading...' : 'GENERATE STUDY GIFTS ✨'}
             </button>
-            <button onClick={nextCard}>Next →</button>
           </div>
+        ) : (
+          <div className="flashcard-viewer" style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
+            <div style={{ marginBottom: '2rem', color: '#ffd700', fontSize: '1.2rem' }}>
+              Gift {currentCard + 1} of {flashcards.length}
+            </div>
 
-          <button 
-            className="new-set-btn"
-            onClick={() => {
-              setFlashcards([])
-              setContent('')
-            }}
-          >
-            Create New Set
-          </button>
-        </div>
-      )}
+            <div
+              onClick={() => setFlipped(!flipped)}
+              style={{
+                height: '350px', position: 'relative', cursor: 'pointer', perspective: '1000px', marginBottom: '3rem'
+              }}
+            >
+              <div style={{
+                width: '100%', height: '100%', transition: 'transform 0.6s', transformStyle: 'preserve-3d',
+                transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+              }}>
+                {/* Front */}
+                <div className="glass-card-3d" style={{
+                  position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem',
+                  border: '2px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)'
+                }}>
+                  <div style={{ fontSize: '0.8rem', color: '#ffd700', marginBottom: '1rem', textTransform: 'uppercase' }}>Ice Question ❄️</div>
+                  <div style={{ fontSize: '1.8rem', color: '#fff' }}>{flashcards[currentCard].question}</div>
+                  <div style={{ marginTop: '2rem', opacity: 0.6, fontSize: '0.9rem' }}>Click to flip</div>
+                </div>
+
+                {/* Back */}
+                <div className="glass-card-3d" style={{
+                  position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem',
+                  border: '2px solid rgba(46, 139, 87, 0.4)', background: 'rgba(46, 139, 87, 0.1)', transform: 'rotateY(180deg)'
+                }}>
+                  <div style={{ fontSize: '0.8rem', color: '#3cb371', marginBottom: '1rem', textTransform: 'uppercase' }}>Winter Answer 🎁</div>
+                  <div style={{ fontSize: '1.8rem', color: '#fff' }}>{flashcards[currentCard].answer}</div>
+                  <div style={{ marginTop: '2rem', opacity: 0.6, fontSize: '0.9rem' }}>Click to flip back</div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '2rem' }}>
+              <button onClick={prevCard} className="btn-secondary" style={{ padding: '0.8rem 2rem' }}>Back</button>
+              <button onClick={nextCard} className="btn-secondary" style={{ padding: '0.8rem 2rem' }}>Next</button>
+            </div>
+
+            <button
+              className="btn-christmas-premium"
+              onClick={() => { setFlashcards([]); setContent('') }}
+              style={{ background: 'transparent', border: 'none', color: '#ffd700', textDecoration: 'underline' }}
+            >
+              Start New Study Session ✨
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

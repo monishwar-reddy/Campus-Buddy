@@ -3,17 +3,34 @@
 ## Project Information
 
 **Project Name:** CampusConnect  
-**Category:** Education & Learning  
-**Bonus Category:** Best Use of AI  
-**Repository:** [Your GitHub URL]  
-**Live Demo:** [Your Netlify URL]  
-**Demo Video:** [Your YouTube/Vimeo URL]
+**Primary Category:** AI / Robotics  
+**Repository:** https://github.com/CampusConnect-KBNU/  
+**Live Demo:** https://campusconnect-kbnu.netlify.app/  
+**Demo Video:** [To be added]
+
+---
+
+## Vision Statement
+
+We wanted to create a platform where education, entertainment, and AI-driven growth converge. CampusConnect transforms the traditional campus experience by combining serious academic tools with engaging entertainment, all powered by intelligent AI features that moderate content, assist students, and enhance learning.
 
 ---
 
 ## Project Description
 
-CampusConnect is a comprehensive campus community platform that revolutionizes how students interact, share knowledge, and engage with campus life. Built with React and Supabase, it features AI-powered content moderation, an interactive Pac-Man game, flashcard study system, project showcase, and real-time leaderboard.
+CampusConnect is an **AI-powered campus community platform** that seamlessly integrates multiple technologies into one cohesive ecosystem. Built with React, Supabase, and Google Gemini AI, it combines education (flashcards), gaming (Pac-Man), social networking (posts/comments), AI assistance (chatbot), and gamification (leaderboard) to create an engaging campus experience.
+
+### Why AI / Robotics Category?
+
+CampusConnect leverages **Google Gemini AI** throughout the platform:
+
+1. **Intelligent Content Moderation**: Automatically flags inappropriate posts using AI analysis
+2. **Smart Auto-Categorization**: AI classifies posts into Notes, Doubts, Opportunities, or Events
+3. **Content Summarization**: Generates concise summaries for long posts
+4. **AI Chatbot**: Provides instant assistance for campus queries and student support
+5. **Fallback Intelligence**: Graceful degradation with keyword-based fallbacks when AI is unavailable
+
+The AI isn't just a feature—it's the backbone that makes the platform safe, organized, and helpful for students.
 
 ### Key Features
 
@@ -256,6 +273,6 @@ MIT License - Open Source
 
 ---
 
-**Submission Date:** November 20, 2024  
-**Developer:** [Your Name]  
-**Contact:** [Your Email]
+**Submission Date:** November 24, 2025  
+**Developer:** CampusConnect Team  
+**Contact:** Available via GitHub repository

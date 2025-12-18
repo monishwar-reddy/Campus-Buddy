@@ -18,6 +18,9 @@ import Leaderboard from './pages/features/Leaderboard'
 import Projects from './pages/features/Projects'
 
 import './App.css'
+import './components/ChristmasTheme/ChristmasTheme.css'
+import Snowfall from './components/ChristmasTheme/Snowfall'
+import CustomCursor from './components/ChristmasTheme/CustomCursor'
 
 function AppContent() {
   const location = useLocation()
@@ -26,7 +29,7 @@ function AppContent() {
   return (
     <div className="app">
       <Navbar />
-      <main className={isLanding ? '' : 'container'}>
+      <main>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/features" element={<FeaturesPortal />} />
@@ -34,17 +37,17 @@ function AppContent() {
           <Route path="/create" element={<CreatePost />} />
           <Route path="/post/:id" element={<PostDetail />} />
           <Route path="/profile" element={<Profile />} />
-          
+
           {/* Feature Routes */}
           <Route path="/features/ai-smart-posts" element={<AISmartPosts />} />
           <Route path="/features/ai-chatbot" element={<AIChatbot />} />
           <Route path="/features/flashcards" element={<Flashcards />} />
           <Route path="/features/leaderboard" element={<Leaderboard />} />
           <Route path="/features/projects" element={<Projects />} />
-          
+
           {/* Fun Game */}
           <Route path="/game" element={<PacManGame />} />
-          
+
           {/* Contact Us */}
           <Route path="/contact" element={<ContactUs />} />
         </Routes>
@@ -56,6 +59,8 @@ function AppContent() {
 function App() {
   return (
     <UserProvider>
+      <Snowfall />
+      <CustomCursor />
       <Router>
         <AppContent />
       </Router>
