@@ -73,14 +73,10 @@ A comprehensive AI-powered campus community platform that revolutionizes student
 4. **Interact** - Like posts and add comments
 5. **AI Magic** - Posts are automatically moderated, tagged, and summarized
 
-## 🎃 Halloween Theme
+## Christmas Theme
 
-- Spooky dark background with purple gradients
-- Glowing red accents (#ff6b6b)
-- Creepster font for headings
-- Floating animations
-- Ghost effects on flagged content
-- Pulsing warnings
+- Christmas background.
+- And more
 
 ## 🛠️ Features Checklist
 
@@ -108,8 +104,8 @@ A comprehensive AI-powered campus community platform that revolutionizes student
 
 ## 🎬 Demo Tips
 
-1. Show the spooky UI and animations
-2. Demonstrate AI moderation by posting content with words like "spam" or "fake"
+1. Show the UI and animations
+2. Demonstrate AI moderation.
 3. Show AI auto-tagging by creating posts about different topics
 4. Highlight the responsive design
 5. Show the search and filter functionality
@@ -119,9 +115,9 @@ A comprehensive AI-powered campus community platform that revolutionizes student
 This project is optimized for hackathon judging with:
 - ✅ Complete AI integration
 - ✅ Polished UI/UX
-- ✅ Unique Halloween theme
+- ✅ Unique christmas theme
 - ✅ Full functionality
 - ✅ Mobile responsive
 - ✅ Clean code structure
 
-Good luck! 🎃👻
+Good luck! 
