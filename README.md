@@ -2,6 +2,9 @@
 
 A comprehensive AI-powered campus community platform that revolutionizes student interaction, knowledge sharing, and campus engagement.
 
+Try out:
+
+https://campus-connect-official.netlify.app/
 ## ✨ Features
 
 ### 🤖 AI Features (Powered by Gemini)
