@@ -1,4 +1,4 @@
-# 🎓 CampusConnect
+# 🎓 Merry CampusConnect
 
 A comprehensive AI-powered campus community platform that revolutionizes student interaction, knowledge sharing, and campus engagement.
 
