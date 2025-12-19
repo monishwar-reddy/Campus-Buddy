@@ -61,39 +61,39 @@ function AISmartPosts() {
   }
 
   return (
-    <div className="feature-page christmas-feature">
+    <div className="feature-page">
       <div className="page-background" style={{ backgroundImage: 'url(/images/features-bg.jpg)' }}></div>
       <div className="page-overlay"></div>
 
-      <div className="container" style={{ position: 'relative', zIndex: 10, paddingTop: '4rem' }}>
-        <div className="feature-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h1 style={{ fontSize: '4rem', fontFamily: "'Mountains of Christmas', cursive", color: '#ffd700' }}>
-            🤖 AI Winter Scribe
+      <div className="container relative-z" style={{ paddingTop: '5rem' }}>
+        <div className="feature-header" style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <h1 className="section-title">
+            <i className="fas fa-robot"></i> AI Winter Scribe
           </h1>
-          <p style={{ fontSize: '1.2rem', color: '#fff' }}>Let AI polish your festive notes and projects!</p>
+          <p style={{ fontSize: '1.4rem', color: '#fff', opacity: 0.9 }}>
+            Let AI polish your festive notes and projects!
+          </p>
         </div>
 
-        <div className="ai-tool-grid" style={{ display: 'grid', gridTemplateColumns: result ? '1fr 1fr' : '1fr', gap: '2rem' }}>
-          <div className="glass-card-3d" style={{ padding: '2rem', background: 'rgba(255,255,255,0.05)' }}>
-            <h3 style={{ marginBottom: '1rem', color: '#ffd700' }}>Your Input</h3>
+        <div className="ai-tool-grid" style={{ display: 'grid', gridTemplateColumns: result ? '1fr 1fr' : '1fr', gap: '3rem', maxWidth: '1200px', margin: '0 auto' }}>
+          <div className="post-card" style={{ padding: '3rem', alignItems: 'flex-start' }}>
+            <h3 style={{ marginBottom: '1.5rem', fontSize: '2rem' }}>Your Input</h3>
             <textarea
+              className="festive-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Enter your text here..."
-              rows="10"
-              style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '1rem', borderRadius: '15px', resize: 'none', outline: 'none' }}
+              rows="8"
+              style={{ marginBottom: '2rem', height: 'auto', resize: 'vertical' }}
             />
 
-            <div style={{ display: 'flex', gap: '0.5rem', margin: '1.5rem 0', flexWrap: 'wrap' }}>
+            <div className="categories-tray" style={{ marginBottom: '2.5rem', justifyContent: 'flex-start', width: '100%' }}>
               {['improve', 'expand', 'summarize', 'translate'].map(a => (
                 <button
                   key={a}
                   onClick={() => setAction(a)}
-                  style={{
-                    padding: '0.5rem 1rem', borderRadius: '50px', cursor: 'pointer',
-                    background: action === a ? 'var(--christmas-red)' : 'rgba(255,255,255,0.1)',
-                    border: '1px solid rgba(255,255,255,0.2)', color: '#fff', textTransform: 'capitalize'
-                  }}
+                  className={`cat-btn ${action === a ? 'active' : ''}`}
+                  style={{ textTransform: 'capitalize' }}
                 >
                   {a === 'translate' ? 'Simplify' : a}
                 </button>
@@ -104,20 +104,19 @@ function AISmartPosts() {
               className="btn-christmas-premium"
               onClick={processWithAI}
               disabled={loading}
-              style={{ width: '100%' }}
             >
-              {loading ? 'Magic in progress...' : 'ENHANCE MAGIC ✨'}
+              {loading ? 'Magic in progress...' : <>ENHANCE MAGIC <i className="fas fa-wand-sparkles"></i></>}
             </button>
           </div>
 
           {result && (
-            <div className="glass-card-3d" style={{ padding: '2rem', background: 'rgba(46, 139, 87, 0.1)', animation: 'slideUp 0.4s' }}>
-              <h3 style={{ marginBottom: '1rem', color: '#ffd700' }}>AI Gift 🎁</h3>
-              <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1.5rem', borderRadius: '15px', minHeight: '300px', color: '#fff', lineHeight: '1.6', marginBottom: '1.5rem', whiteSpace: 'pre-wrap' }}>
+            <div className="post-card" style={{ padding: '3rem', alignItems: 'flex-start' }}>
+              <h3 style={{ marginBottom: '1.5rem', fontSize: '2rem' }}>AI Gift <i className="fas fa-gift"></i></h3>
+              <div style={{ background: 'rgba(0,0,0,0.3)', padding: '2rem', borderRadius: '15px', minHeight: '300px', color: '#fff', lineHeight: '1.8', marginBottom: '2.5rem', whiteSpace: 'pre-wrap', width: '100%', border: '1px solid rgba(255,255,255,0.1)' }}>
                 {result}
               </div>
-              <button className="btn-christmas-premium" onClick={saveAsPost} style={{ width: '100%', background: 'linear-gradient(135deg, #2e8b57 0%, #3cb371 100%)' }}>
-                SHARE AS GIFT ❄️
+              <button className="btn-christmas-premium" onClick={saveAsPost} style={{ background: 'var(--christmas-green)', width: '100%' }}>
+                SHARE AS GIFT <i className="fas fa-snowflake"></i>
               </button>
             </div>
           )}

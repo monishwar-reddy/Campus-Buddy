@@ -77,27 +77,28 @@ ${content}`
   const prevCard = () => { setFlipped(false); setCurrentCard((prev) => (prev - 1 + flashcards.length) % flashcards.length) }
 
   return (
-    <div className="feature-page christmas-feature">
+    <div className="feature-page">
       <div className="page-background" style={{ backgroundImage: 'url(/images/features-bg.jpg)' }}></div>
       <div className="page-overlay"></div>
 
-      <div className="container" style={{ position: 'relative', zIndex: 10, paddingTop: '4rem' }}>
-        <div className="feature-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h1 style={{ fontSize: '4rem', fontFamily: "'Mountains of Christmas', cursive", color: '#ffd700' }}>
-            📇 Winter Flashcards
+      <div className="container relative-z" style={{ paddingTop: '5rem' }}>
+        <div className="feature-header" style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <h1 className="section-title">
+            <i className="fas fa-snowflake"></i> Winter Flashcards
           </h1>
-          <p style={{ fontSize: '1.2rem', color: '#fff' }}>Icy efficient study tools for your winter exams!</p>
+          <p style={{ fontSize: '1.4rem', color: '#fff', opacity: 0.9 }}>Icy efficient study tools for your winter exams!</p>
         </div>
 
         {flashcards.length === 0 ? (
-          <div className="glass-card-3d" style={{ maxWidth: '700px', margin: '0 auto', padding: '3rem', background: 'rgba(255,255,255,0.05)' }}>
-            <h3 style={{ marginBottom: '1.5rem', color: '#ffd700' }}>Enter Content to Convert</h3>
+          <div className="post-card" style={{ maxWidth: '800px', margin: '0 auto', padding: '3.5rem', alignItems: 'flex-start' }}>
+            <h3 style={{ marginBottom: '1.5rem', fontSize: '2rem' }}>Enter Content to Convert</h3>
             <textarea
+              className="festive-input"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Paste your tutorial, notes, or any learning content here..."
-              rows="12"
-              style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '1.5rem', borderRadius: '15px', resize: 'none', outline: 'none', marginBottom: '2rem' }}
+              rows="10"
+              style={{ marginBottom: '2.5rem', height: 'auto' }}
             />
             <button
               className="btn-christmas-premium"
@@ -105,60 +106,68 @@ ${content}`
               disabled={loading}
               style={{ width: '100%' }}
             >
-              {loading ? 'Frosted Magic Loading...' : 'GENERATE STUDY GIFTS ✨'}
+              {loading ? 'Magic Loading...' : <>GENERATE STUDY GIFTS <i className="fas fa-magic"></i></>}
             </button>
           </div>
         ) : (
-          <div className="flashcard-viewer" style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={{ marginBottom: '2rem', color: '#ffd700', fontSize: '1.2rem' }}>
-              Gift {currentCard + 1} of {flashcards.length}
+          <div className="flashcard-viewer" style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
+            <div style={{ marginBottom: '2rem', color: '#ffd700', fontSize: '1.3rem', fontWeight: 600 }}>
+              <i className="fas fa-gift"></i> Gift {currentCard + 1} of {flashcards.length}
             </div>
 
             <div
               onClick={() => setFlipped(!flipped)}
               style={{
-                height: '350px', position: 'relative', cursor: 'pointer', perspective: '1000px', marginBottom: '3rem'
+                height: '400px', position: 'relative', cursor: 'pointer', perspective: '1000px', marginBottom: '3.5rem'
               }}
             >
               <div style={{
-                width: '100%', height: '100%', transition: 'transform 0.6s', transformStyle: 'preserve-3d',
+                width: '100%', height: '100%', transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)', transformStyle: 'preserve-3d',
                 transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
               }}>
                 {/* Front */}
-                <div className="glass-card-3d" style={{
+                <div className="post-card" style={{
                   position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem',
-                  border: '2px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)'
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem',
+                  border: '2px solid var(--christmas-gold)', background: 'var(--midnight-blue)'
                 }}>
-                  <div style={{ fontSize: '0.8rem', color: '#ffd700', marginBottom: '1rem', textTransform: 'uppercase' }}>Ice Question ❄️</div>
-                  <div style={{ fontSize: '1.8rem', color: '#fff' }}>{flashcards[currentCard].question}</div>
-                  <div style={{ marginTop: '2rem', opacity: 0.6, fontSize: '0.9rem' }}>Click to flip</div>
+                  <div style={{ fontSize: '1rem', color: 'var(--christmas-gold)', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '2px' }}>
+                    <i className="fas fa-question-circle"></i> Ice Question
+                  </div>
+                  <div style={{ fontSize: '2rem', color: '#fff', fontWeight: 500 }}>{flashcards[currentCard].question}</div>
+                  <div style={{ marginTop: '3rem', opacity: 0.5, fontSize: '0.9rem' }}>Click to unwrap...</div>
                 </div>
 
                 {/* Back */}
-                <div className="glass-card-3d" style={{
+                <div className="post-card" style={{
                   position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem',
-                  border: '2px solid rgba(46, 139, 87, 0.4)', background: 'rgba(46, 139, 87, 0.1)', transform: 'rotateY(180deg)'
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem',
+                  border: '2px solid var(--christmas-green)', background: 'rgba(22, 91, 51, 0.2)', transform: 'rotateY(180deg)'
                 }}>
-                  <div style={{ fontSize: '0.8rem', color: '#3cb371', marginBottom: '1rem', textTransform: 'uppercase' }}>Winter Answer 🎁</div>
-                  <div style={{ fontSize: '1.8rem', color: '#fff' }}>{flashcards[currentCard].answer}</div>
-                  <div style={{ marginTop: '2rem', opacity: 0.6, fontSize: '0.9rem' }}>Click to flip back</div>
+                  <div style={{ fontSize: '1rem', color: '#ffd700', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '2px' }}>
+                    <i className="fas fa-gift"></i> Winter Answer
+                  </div>
+                  <div style={{ fontSize: '2rem', color: '#fff', fontWeight: 500 }}>{flashcards[currentCard].answer}</div>
+                  <div style={{ marginTop: '3rem', opacity: 0.5, fontSize: '0.9rem' }}>Click to flip back</div>
                 </div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '2rem' }}>
-              <button onClick={prevCard} className="btn-secondary" style={{ padding: '0.8rem 2rem' }}>Back</button>
-              <button onClick={nextCard} className="btn-secondary" style={{ padding: '0.8rem 2rem' }}>Next</button>
+            <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', marginBottom: '3rem' }}>
+              <button onClick={prevCard} className="logout-btn" style={{ padding: '1rem 2.5rem', fontSize: '1.1rem' }}>
+                <i className="fas fa-arrow-left"></i> Back
+              </button>
+              <button onClick={nextCard} className="logout-btn" style={{ padding: '1rem 2.5rem', fontSize: '1.1rem', background: 'var(--christmas-green)' }}>
+                Next <i className="fas fa-arrow-right"></i>
+              </button>
             </div>
 
             <button
               className="btn-christmas-premium"
               onClick={() => { setFlashcards([]); setContent('') }}
-              style={{ background: 'transparent', border: 'none', color: '#ffd700', textDecoration: 'underline' }}
+              style={{ background: 'transparent', border: 'none', color: '#ffd700', textDecoration: 'underline', width: 'auto' }}
             >
-              Start New Study Session ✨
+              Start New Study Session <i className="fas fa-redo"></i>
             </button>
           </div>
         )}

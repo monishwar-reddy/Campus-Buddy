@@ -13,46 +13,46 @@ function Projects() {
   }
 
   return (
-    <div className="feature-page christmas-feature">
+    <div className="feature-page">
       <div className="page-background" style={{ backgroundImage: 'url(/images/features-bg.jpg)' }}></div>
       <div className="page-overlay"></div>
 
-      <div className="container" style={{ position: 'relative', zIndex: 10, paddingTop: '4rem' }}>
-        <div className="feature-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h1 style={{ fontSize: '4rem', fontFamily: "'Mountains of Christmas', cursive", color: '#ffd700' }}>
-            🚀 Winter Workshop
+      <div className="container relative-z" style={{ paddingTop: '5rem' }}>
+        <div className="feature-header" style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <h1 className="section-title">
+            <i className="fas fa-rocket"></i> Winter Workshop
           </h1>
-          <p style={{ fontSize: '1.2rem', color: '#fff' }}>Showcase your coding gifts to the campus community!</p>
+          <p style={{ fontSize: '1.4rem', color: '#fff', opacity: 0.9 }}>Showcase your coding gifts to the campus community!</p>
         </div>
 
-        <div className="projects-section" style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <Link to="/create" className="btn-christmas-premium">
-              + START A NEW PROJECT ✨
+        <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
+          <Link to="/" className="btn-new-project">
+            <i className="fas fa-plus-circle"></i> START A NEW PROJECT
+          </Link>
+        </div>
+
+        <div className="posts-grid home-page">
+          {projects.map(project => (
+            <Link to={`/post/${project.id}`} key={project.id} className="post-card" style={{ textDecoration: 'none', padding: '2.5rem' }}>
+              <div style={{ fontSize: '0.9rem', color: 'var(--christmas-gold)', marginBottom: '1rem', fontWeight: 600 }}>
+                <i className="fas fa-gift"></i> PROJECT GIFT
+              </div>
+              <h3 className="post-title" style={{ fontSize: '1.8rem', width: '100%', marginBottom: '1rem' }}>{project.title}</h3>
+              <p className="post-excerpt" style={{ width: '100%', opacity: 0.8, marginBottom: '2rem' }}>{project.content.substring(0, 150)}...</p>
+              <div className="post-footer" style={{ width: '100%', paddingTop: '1.2rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                <span className="author-tag" style={{ color: '#ffd700' }}><i className="fas fa-user-circle"></i> {project.author}</span>
+                <span style={{ fontWeight: 'bold', color: '#fff' }}><i className="fas fa-heart" style={{ color: 'var(--christmas-red)' }}></i> {project.likes || 0}</span>
+              </div>
             </Link>
-          </div>
-
-          <div className="projects-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
-            {projects.map(project => (
-              <Link to={`/post/${project.id}`} key={project.id} className="glass-card-3d" style={{ padding: '2rem', textDecoration: 'none', color: '#fff' }}>
-                <div style={{ fontSize: '0.8rem', color: '#ffd700', marginBottom: '1rem', textTransform: 'uppercase' }}>Project Gift 🎁</div>
-                <h3 style={{ fontSize: '1.8rem', color: '#ffd700', marginBottom: '1rem' }}>{project.title}</h3>
-                <p style={{ opacity: 0.9, lineHeight: '1.6', marginBottom: '1.5rem' }}>{project.content.substring(0, 120)}...</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                  <span style={{ fontSize: '0.9rem' }}>👤 {project.author}</span>
-                  <span style={{ fontWeight: 'bold', color: '#ffd700' }}>❤️ {project.likes || 0}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          {projects.length === 0 && (
-            <div className="glass-card-3d" style={{ textAlign: 'center', padding: '4rem', background: 'rgba(255,255,255,0.05)' }}>
-              <p style={{ fontSize: '1.5rem', color: '#ffd700' }}>The workshop is empty! ❄️</p>
-              <p>Be the first to share your project and light up the campus.</p>
-            </div>
-          )}
+          ))}
         </div>
+
+        {projects.length === 0 && (
+          <div className="empty-state-container">
+            <p className="empty-text">The workshop is empty! <i className="fas fa-snowflake"></i></p>
+            <p style={{ marginTop: '1rem', opacity: 0.7 }}>Be the first to share your project and light up the campus.</p>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -4,7 +4,6 @@ function ContactUs() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    subject: '',
     message: ''
   })
   const [submitted, setSubmitted] = useState(false)
@@ -24,7 +23,7 @@ function ContactUs() {
 
       if (response.ok) {
         setSubmitted(true)
-        setFormData({ name: '', email: '', subject: '', message: '' })
+        setFormData({ name: '', email: '', message: '' })
         setTimeout(() => setSubmitted(false), 5000)
       }
     } catch (error) {
@@ -41,65 +40,71 @@ function ContactUs() {
 
   return (
     <div className="contact-page">
-      {/* 1. Page Background & Overlay - Using Public Image */}
       <div className="page-background" style={{ backgroundImage: 'url(/images/contact-bg.png)' }}></div>
       <div className="page-overlay"></div>
 
-      <form className="contact-form" onSubmit={handleSubmit}>
-        <h1 style={{ fontFamily: "'Mountains of Christmas', cursive", fontSize: '3rem', color: '#ffd700' }}>
-          📧 Send a Gift Message
-        </h1>
-        <p style={{ marginBottom: '2rem', color: '#e0e0e0' }}>Have questions? We'd love to hear from you!</p>
+      <div className="container relative-z" style={{ paddingTop: '5rem', paddingBottom: '5rem' }}>
+        <div className="contact-form-container">
+          <h1 className="section-title" style={{ fontSize: '3rem', marginBottom: '1rem' }}>
+            <i className="fas fa-envelope-open-text"></i> Send a Gift Message
+          </h1>
+          <p style={{ textAlign: 'center', fontSize: '1.1rem', marginBottom: '2.5rem', opacity: 0.9 }}>
+            Have questions? We'd love to hear from you!
+          </p>
 
-        <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem', color: '#ffd700' }}>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Your name"
-            required
-            style={{ padding: '1rem', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '10px', color: '#fff', width: '100%' }}
-          />
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Name</label>
+              <input
+                type="text"
+                name="name"
+                className="festive-input"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Your name"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                className="festive-input"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="your.email@example.com"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Message</label>
+              <textarea
+                name="message"
+                className="festive-input"
+                value={formData.message}
+                onChange={handleChange}
+                placeholder="Your festive message here..."
+                rows="5"
+                required
+                style={{ resize: 'none' }}
+              />
+            </div>
+
+            <button type="submit" className="btn-christmas-premium">
+              SEND MESSAGE <i className="fas fa-paper-plane"></i>
+            </button>
+
+            {submitted && (
+              <div className="success-message" style={{ marginTop: '2rem', color: '#ffd700', textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
+                <i className="fas fa-check-circle"></i> Message sent successfully! 🎄
+              </div>
+            )}
+          </form>
         </div>
-
-        <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem', color: '#ffd700' }}>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="your.email@example.com"
-            required
-            style={{ padding: '1rem', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '10px', color: '#fff', width: '100%' }}
-          />
-        </div>
-
-        <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem', color: '#ffd700' }}>Message</label>
-          <textarea
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            placeholder="Your festive message here..."
-            rows="5"
-            required
-            style={{ padding: '1rem', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '10px', color: '#fff', width: '100%', resize: 'none' }}
-          />
-        </div>
-
-        <button type="submit" className="btn-christmas-premium" style={{ width: '100%', border: 'none' }}>
-          SEND MESSAGE ✨
-        </button>
-
-        {submitted && (
-          <div className="success-message" style={{ marginTop: '1.5rem', color: '#00ff00', textAlign: 'center' }}>
-            ✅ Message sent successfully! 🎄
-          </div>
-        )}
-      </form>
+      </div>
     </div>
   )
 }

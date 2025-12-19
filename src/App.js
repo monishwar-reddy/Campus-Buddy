@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
-import { UserProvider } from './context/UserContext'
+import { UserProvider, UserContext } from './context/UserContext'
+import { useContext } from 'react'
 import Navbar from './components/Navbar'
 import Landing from './pages/Landing'
 import FeaturesPortal from './pages/FeaturesPortal'
@@ -9,6 +10,7 @@ import PostDetail from './pages/PostDetail'
 import Profile from './pages/Profile'
 import PacManGame from './pages/PacManGame'
 import ContactUs from './pages/ContactUs'
+import Login from './pages/Login'
 
 // Feature Pages
 import AISmartPosts from './pages/features/AISmartPosts'
@@ -23,8 +25,14 @@ import Snowfall from './components/ChristmasTheme/Snowfall'
 import CustomCursor from './components/ChristmasTheme/CustomCursor'
 
 function AppContent() {
+  const { user, loading } = useContext(UserContext)
   const location = useLocation()
-  const isLanding = location.pathname === '/' || location.pathname === '/features'
+
+  if (loading) return null
+
+  if (!user) {
+    return <Login />
+  }
 
   return (
     <div className="app">

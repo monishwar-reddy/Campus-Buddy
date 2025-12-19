@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { UserContext } from '../context/UserContext'
 
@@ -50,71 +50,76 @@ function Home() {
   }
 
   return (
-    <div className="home christmas-home">
-      {/* 1. Page Background & Overlay - Using Public Image */}
+    <div className="home-page">
       <div className="page-background" style={{ backgroundImage: 'url(/images/home-bg.jpg)' }}></div>
       <div className="page-overlay"></div>
 
-      <div className="container" style={{ position: 'relative', zIndex: 10, paddingTop: '2rem' }}>
-        <h1 style={{ fontFamily: "'Mountains of Christmas', cursive", fontSize: '4rem', textAlign: 'center', marginBottom: '2rem', color: '#ffd700' }}>
-          🎁 Winter Feed 🎄
+      <div className="container relative-z" style={{ paddingTop: '5rem' }}>
+        <h1 className="section-title">
+          <i className="fas fa-gift"></i> Winter Feed <i className="fas fa-tree"></i>
         </h1>
 
-        <div className="search-bar" style={{ maxWidth: '600px', margin: '0 auto 2rem', position: 'relative' }}>
+        <div className="search-bar-container">
           <input
             type="text"
-            placeholder="🔍 Search festive posts..."
+            className="festive-search"
+            placeholder="Search festive posts..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ width: '100%', padding: '1.2rem', borderRadius: '50px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', fontSize: '1.1rem', outline: 'none' }}
           />
+          <i className="fas fa-search search-icon-overlay"></i>
         </div>
 
-        <div className="categories" style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '3rem' }}>
+        <div className="categories-tray">
           {categories.map(cat => (
             <button
               key={cat}
-              className={category === cat ? 'active cat-btn' : 'cat-btn'}
+              className={`cat-btn ${category === cat ? 'active' : ''}`}
               onClick={() => setCategory(cat)}
-              style={{
-                background: category === cat ? 'linear-gradient(135deg, #d4145a 0%, #ff0055 100%)' : 'rgba(255,255,255,0.05)',
-                color: '#fff', padding: '0.6rem 1.5rem', borderRadius: '50px', border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer', transition: 'all 0.3s'
-              }}
             >
               {cat}
             </button>
           ))}
         </div>
 
-        <div className="posts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem' }}>
-          {filteredPosts.map(post => (
-            <div key={post.id} className="glass-card-3d post-card" style={{ padding: '2rem', position: 'relative' }}>
-              <div className="post-header" style={{ marginBottom: '1rem' }}>
-                <span className="category-badge" style={{ background: '#2e8b57', padding: '0.3rem 0.8rem', borderRadius: '50px', fontSize: '0.8rem' }}>{post.category}</span>
-                {post.flagged && <span className="flag-badge" style={{ marginLeft: '1rem' }}>⚠️</span>}
-              </div>
+        <div className="posts-grid home-page">
+          {filteredPosts.map(post => {
+            const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '{}');
+            const isLiked = user && likedPosts[`${user.username}_${post.id}`];
 
-              <div onClick={() => navigate(`/post/${post.id}`)} style={{ cursor: 'pointer' }}>
-                <h3 style={{ fontSize: '1.8rem', color: '#ffd700', marginBottom: '1rem' }}>{post.title}</h3>
-                <p style={{ opacity: 0.9, lineHeight: '1.6' }}>{post.content.substring(0, 150)}...</p>
-              </div>
+            return (
+              <div key={post.id} className="post-card">
+                <div className="post-header" style={{ width: '100%', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between' }}>
+                  <span className="category-badge"><i className="fas fa-tag"></i> {post.category}</span>
+                  {post.flagged && <span className="flag-badge"><i className="fas fa-exclamation-triangle" style={{ color: '#ff4e50' }}></i></span>}
+                </div>
 
-              <div className="post-footer" style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem' }}>
-                <span className="author" style={{ fontSize: '0.9rem', color: '#ffd700' }}>👤 {post.author || 'Santa Helper'}</span>
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleLike(post.id, post.likes, post.author) }}
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fff' }}
-                >
-                  {user && JSON.parse(localStorage.getItem('likedPosts') || '{}')[`${user.username}_${post.id}`] ? '❤️' : '🤍'} {post.likes || 0}
-                </button>
+                <div onClick={() => navigate(`/post/${post.id}`)} style={{ width: '100%', cursor: 'pointer', textAlign: 'left' }}>
+                  <h3 className="post-title" style={{ fontSize: '1.8rem', marginBottom: '0.8rem' }}>{post.title}</h3>
+                  <p className="post-excerpt" style={{ opacity: 0.8, fontSize: '1rem', lineHeight: '1.6' }}>{post.content.substring(0, 150)}...</p>
+                </div>
+
+                <div className="post-footer" style={{ width: '100%', marginTop: '2rem', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.2rem' }}>
+                  <span className="author-tag" style={{ color: '#ffd700' }}><i className="fas fa-user-circle"></i> {post.author || 'Santa Helper'}</span>
+                  <button
+                    className="like-button"
+                    onClick={(e) => { e.stopPropagation(); handleLike(post.id, post.likes, post.author) }}
+                    style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.2rem' }}
+                  >
+                    <i className={isLiked ? "fas fa-heart" : "far fa-heart"} style={{ color: isLiked ? '#ff4e50' : '#fff' }}></i>
+                    <span style={{ marginLeft: '8px' }}>{post.likes || 0}</span>
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {filteredPosts.length === 0 && (
-          <div className="empty-state" style={{ textAlign: 'center', padding: '5rem' }}>
-            <p style={{ fontSize: '1.5rem', color: '#ffd700' }}>No snowflakes found here! ❄️ Be the first to share warmth.</p>
+          <div className="empty-state-container" style={{ textAlign: 'center', padding: '4rem' }}>
+            <p className="empty-text" style={{ fontSize: '1.5rem', color: '#ffd700' }}>
+              <i className="fas fa-snowflake"></i> No snowflakes found here! Be the first to share warmth.
+            </p>
           </div>
         )}
       </div>
