@@ -27,6 +27,44 @@
   border-color: #ffd700;
 }
 
+/* Secondary Button for Games */
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white !important;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  backdrop-filter: blur(5px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Game Control Buttons (Mobile) */
+.btn-christmas {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  /* Green festive */
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-christmas:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(46, 204, 113, 0.2);
+}
+
 /* Background Systems */
 .page-background {
   position: fixed;

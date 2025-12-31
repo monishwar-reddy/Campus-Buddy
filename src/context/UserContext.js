@@ -1,5 +1,7 @@
 import { createContext, useState, useEffect } from 'react'
+import { auth, googleProvider } from '../firebase'
 import { supabase } from '../supabaseClient'
+import { onAuthStateChanged, signInWithPopup, signOut, updateProfile as firebaseUpdateProfile } from 'firebase/auth'
 
 export const UserContext = createContext()
 
@@ -8,27 +10,14 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check active sessions and sets the user
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
+    // Listen for changes on auth state
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
         setUser({
-          id: session.user.id,
-          username: session.user.user_metadata.full_name || session.user.email.split('@')[0],
-          email: session.user.email,
-          avatar: session.user.user_metadata.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.user.id}`
-        })
-      }
-      setLoading(false)
-    })
-
-    // Listen for changes on auth state (logged in, signed out, etc.)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setUser({
-          id: session.user.id,
-          username: session.user.user_metadata.full_name || session.user.email.split('@')[0],
-          email: session.user.email,
-          avatar: session.user.user_metadata.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.user.id}`
+          id: currentUser.uid,
+          username: currentUser.displayName || currentUser.email.split('@')[0],
+          email: currentUser.email,
+          avatar: currentUser.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.uid}`
         })
       } else {
         setUser(null)
@@ -36,18 +25,17 @@ export const UserProvider = ({ children }) => {
       setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    return () => unsubscribe()
   }, [])
 
-  const loginWithProvider = async (provider) => {
+  const loginWithProvider = async (providerName) => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: provider,
-        options: {
-          redirectTo: window.location.origin
-        }
-      })
-      if (error) throw error
+      // We only support Google for now in this migration
+      if (providerName === 'google') {
+        await signInWithPopup(auth, googleProvider)
+      } else {
+        alert('Only Google login is supported in this Firebase migration.')
+      }
     } catch (error) {
       console.error('Login Error:', error.message)
       alert(`Login failed: ${error.message}`)
@@ -55,44 +43,64 @@ export const UserProvider = ({ children }) => {
   }
 
   const logout = async () => {
-    await supabase.auth.signOut()
+    await signOut(auth)
     setUser(null)
   }
 
   const updateProfile = async (data) => {
-    const { data: updatedUser, error } = await supabase.auth.updateUser({
-      data: {
-        full_name: data.username || user.username,
-        avatar_url: data.avatar || user.avatar
-      }
-    })
+    if (!auth.currentUser) return { error: 'No user' }
 
-    if (error) return { error }
+    try {
+      await firebaseUpdateProfile(auth.currentUser, {
+        displayName: data.username || user.username,
+        photoURL: data.avatar || user.avatar
+      })
 
-    setUser(prev => ({
-      ...prev,
-      username: updatedUser.user.user_metadata.full_name,
-      avatar: updatedUser.user.user_metadata.avatar_url
-    }))
-    return { data: updatedUser }
+      setUser(prev => ({
+        ...prev,
+        username: auth.currentUser.displayName,
+        avatar: auth.currentUser.photoURL
+      }))
+      return { data: auth.currentUser }
+    } catch (error) {
+      return { error }
+    }
   }
 
+  // implemented avatar upload using Supabase Storage
   const uploadAvatar = async (file) => {
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${user.id}-${Math.random()}.${fileExt}`
-    const filePath = `avatars/${fileName}`
+    if (!user) {
+      alert("You must be logged in to upload an avatar.")
+      return
+    }
 
-    const { error: uploadError } = await supabase.storage
-      .from('profiles')
-      .upload(filePath, file)
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`
+      const filePath = `${fileName}`
 
-    if (uploadError) return { error: uploadError }
+      // Upload to Supabase 'avatars' bucket
+      // Note: Make sure you have created a public bucket named 'avatars' in Supabase
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file)
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('profiles')
-      .getPublicUrl(filePath)
+      if (error) throw error
 
-    return updateProfile({ avatar: publicUrl })
+      // Get Public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath)
+
+      // Update Firebase Profile
+      await updateProfile({ avatar: publicUrl })
+
+      return { data: publicUrl }
+    } catch (error) {
+      console.error('Avatar Upload Error:', error)
+      alert(`Avatar upload failed: ${error.message}`)
+      return { error: error.message }
+    }
   }
 
   return (

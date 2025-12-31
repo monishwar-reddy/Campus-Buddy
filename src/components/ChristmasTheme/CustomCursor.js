@@ -8,12 +8,24 @@ const CustomCursor = () => {
         const handleMouseMove = (e) => {
             const { clientX: x, clientY: y } = e;
 
-            // Super fast direct DOM update
             if (cursorRef.current) {
                 cursorRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
             }
 
-            // High performance trail tracking
+            trailRefs.current.forEach((trail, i) => {
+                const speed = (i + 1) * 2; // Staggered delay effect handled largely by CSS transition if complex, but here we do immediate with slight lag logic if we wanted. 
+                // However, for best "trail" effect without complex state, we just position them at the mouse but with transition delay in CSS or JS interpolation.
+                // Let's stick to the fast "snake" logic which is robust.
+
+                // Better snake logic:
+                // We actually need to store previous positions for a true snake.
+                // But for "sparkles dropping behind", we can't easily do that without state loop.
+                // Let's stick to the "follow with lag" interpolation.
+
+                // Existing logic was: trail[i] moves to trail[i-1]. This creates a snake.
+            });
+
+            // Snake logic copy from previous works best for smooth trails
             for (let i = trailRefs.current.length - 1; i > 0; i--) {
                 const current = trailRefs.current[i];
                 const prev = trailRefs.current[i - 1];
@@ -32,8 +44,8 @@ const CustomCursor = () => {
 
     return (
         <>
-            {/* Pure Christmas Snowflake Trail */}
-            {[...Array(10)].map((_, i) => (
+            {/* Sparkling Magic Trail */}
+            {[...Array(12)].map((_, i) => (
                 <div
                     key={i}
                     ref={(el) => (trailRefs.current[i] = el)}
@@ -43,34 +55,50 @@ const CustomCursor = () => {
                         left: 0,
                         pointerEvents: 'none',
                         zIndex: 9999,
-                        color: '#ffd700',
-                        fontSize: `${16 - i}px`,
-                        opacity: 1 - i / 12,
-                        textShadow: '0 0 5px rgba(255, 215, 0, 0.5)',
-                        willChange: 'transform'
+                        // Visuals
+                        width: `${12 - i}px`,
+                        height: `${12 - i}px`,
+                        background: i % 2 === 0 ? '#ffd700' : '#d4145a',
+                        borderRadius: '50%',
+                        opacity: 0.6 - i / 20,
+                        boxShadow: `0 0 ${10 - i}px ${i % 2 === 0 ? '#ffd700' : '#d4145a'}`,
+                        willChange: 'transform',
+                        mixBlendMode: 'screen'
                     }}
-                >
-                    <i className="fas fa-snowflake"></i>
-                </div>
+                />
             ))}
-            {/* Christmas Gold Cursor Point */}
+
+            {/* Main Cursor: Glowing Wand Tip */}
             <div
                 ref={cursorRef}
                 style={{
                     position: 'fixed',
-                    top: -8,
-                    left: -8,
-                    width: '16px',
-                    height: '16px',
-                    backgroundColor: '#ffd700',
-                    border: '1px solid #fff',
-                    borderRadius: '50%',
-                    pointerEvents: 'none',
+                    top: -10,
+                    left: -10,
                     zIndex: 10000,
-                    boxShadow: '0 0 15px #ffd700',
-                    willChange: 'transform'
+                    pointerEvents: 'none',
+                    // Visuals
+                    width: '20px',
+                    height: '20px',
+                    border: '2px solid #fff',
+                    borderRadius: '50%',
+                    background: 'rgba(255, 215, 0, 0.3)',
+                    boxShadow: '0 0 15px #ffd700, inset 0 0 10px #ffd700',
+                    backdropFilter: 'blur(2px)'
                 }}
-            />
+            >
+                <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '4px',
+                    height: '4px',
+                    background: '#fff',
+                    borderRadius: '50%',
+                    boxShadow: '0 0 10px #fff'
+                }}></div>
+            </div>
         </>
     );
 };

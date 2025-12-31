@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react'
 import { UserContext } from '../../context/UserContext'
 
-const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY
+import { callGemini } from '../../utils/gemini'
 
 function Flashcards() {
   const { user } = useContext(UserContext)
@@ -14,20 +14,11 @@ function Flashcards() {
   const generateFlashcards = async () => {
     if (!content.trim()) { alert('Please enter some content'); return }
     if (!user) { alert('Please login first'); return }
-    if (!GEMINI_API_KEY) {
-      alert('AI study assistant is warming up... try again!'); return
-    }
 
     setLoading(true)
 
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `Create exactly 5 flashcards from this content. Format STRICTLY as:
+      const prompt = `Create exactly 5 flashcards from this content. Format STRICTLY as:
 Q: [question here] | A: [answer here]
 
 Example:
@@ -36,14 +27,8 @@ Q: What is React? | A: A JavaScript library for building user interfaces
 Now create 5 flashcards from this content:
 
 ${content}`
-            }]
-          }]
-        })
-      })
 
-      if (!response.ok) throw new Error(`API Error: ${response.status}`)
-      const data = await response.json()
-      const result = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+      const result = await callGemini(prompt) || ''
 
       let cards = []
       const lines = result.split('\n').filter(line => line.trim())

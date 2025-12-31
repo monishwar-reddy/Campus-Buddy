@@ -18,7 +18,7 @@ function Navbar() {
         {[
           { name: 'Home', path: '/' },
           { name: 'Features', path: '/features' },
-          { name: "Santa's Dash", path: '/game' },
+          { name: "Games", path: '/games' },
           { name: 'Contact', path: '/contact' },
           { name: 'Profile', path: '/profile' }
         ].map(link => (

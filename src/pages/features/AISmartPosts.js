@@ -1,8 +1,7 @@
 import { useState, useContext } from 'react'
 import { UserContext } from '../../context/UserContext'
 import { supabase } from '../../supabaseClient'
-
-const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY
+import { callGemini } from '../../utils/gemini'
 
 function AISmartPosts() {
   const { user } = useContext(UserContext)
@@ -10,38 +9,43 @@ function AISmartPosts() {
   const [action, setAction] = useState('improve')
   const [result, setResult] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sending, setSending] = useState(false)
 
   const processWithAI = async () => {
     if (!input.trim()) { alert('Please enter some text'); return }
     if (!user) { alert('Please login first'); return }
-    if (!GEMINI_API_KEY) {
-      alert('AI magic is loading... please try again!'); return
-    }
 
     setLoading(true); setResult('')
 
     try {
       let prompt = ''
+      const constraint = " Keep the response concise (max 60 words) and plain text (no markdown)."
       switch (action) {
-        case 'improve': prompt = `Improve this text to make it clearer and more professional:\n\n${input}`; break
-        case 'expand': prompt = `Expand this text with more details and examples:\n\n${input}`; break
-        case 'summarize': prompt = `Summarize this text in 2-3 sentences:\n\n${input}`; break
-        case 'translate': prompt = `Translate this text to simple English:\n\n${input}`; break
-        default: prompt = input
+        case 'improve': prompt = `Improve this text to make it clearer and more professional:${constraint}\n\n${input}`; break
+        case 'expand': prompt = `Expand this text slightly with ONE detail:${constraint}\n\n${input}`; break
+        case 'summarize': prompt = `Summarize this text in 1 sentence:${constraint}\n\n${input}`; break
+        case 'translate': prompt = `Translate this text to simple English:${constraint}\n\n${input}`; break
+        default: prompt = input + constraint
       }
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-      })
+      // Race AI against a timeout for better UX
+      const aiPromise = callGemini(prompt);
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("AI timed out")), 8000));
 
-      if (!response.ok) throw new Error(`API Error: ${response.status}`)
-      const data = await response.json()
-      const aiResult = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from AI'
-      setResult(aiResult)
+      const aiResult = await Promise.race([aiPromise, timeoutPromise]);
+
+      // Strip markdown stars just in case
+      setResult(aiResult ? aiResult.replace(/\*\*/g, '') : 'No response from AI')
     } catch (error) {
-      setResult(`Error: ${error.message}`)
+      console.error(error)
+      if (error.message.includes('configuration is missing')) {
+        alert('AI Configuration Error: Please check .env file and restart server.')
+        setResult('Configuration Missing')
+      } else if (error.message === "AI timed out") {
+        setResult("AI seems busy due to holiday traffic 🎅. Please try again.")
+      } else {
+        setResult(`Error: ${error.message}`)
+      }
     } finally {
       setLoading(false)
     }
@@ -49,15 +53,32 @@ function AISmartPosts() {
 
   const saveAsPost = async () => {
     if (!result) return
-    const { error } = await supabase.from('posts').insert([{
-      title: `AI Enhanced: ${input.substring(0, 30)}...`,
-      content: result,
-      category: 'Notes',
-      author: user.username,
-      likes: 0
-    }])
-    if (error) alert('Error saving: ' + error.message)
-    else { alert('Saved to Winter Chronicles! 🎄'); setInput(''); setResult('') }
+
+    setSending(true)
+    console.log("Attempting to save post to Supabase...")
+
+    try {
+      const { error } = await supabase.from('posts').insert([{
+        title: `AI Enhanced: ${input.substring(0, 30)}...`,
+        content: result,
+        category: 'Notes',
+        author: user.username || 'Anonymous',
+        // Let Supabase handle created_at, likes, etc.
+      }])
+
+      if (error) throw error
+
+      console.log("Post saved successfully")
+      alert('Gift has been sent to the Winter Feed! 🎁')
+
+      // Navigate to feed after success
+      window.location.href = '/feed'
+
+    } catch (error) {
+      console.error("Save error:", error)
+      alert('Error saving: ' + error.message)
+      setSending(false)
+    }
   }
 
   return (
@@ -105,7 +126,7 @@ function AISmartPosts() {
               onClick={processWithAI}
               disabled={loading}
             >
-              {loading ? 'Magic in progress...' : <>ENHANCE MAGIC <i className="fas fa-wand-sparkles"></i></>}
+              {loading ? 'Enhancing...' : <>ENHANCE TEXT <i className="fas fa-magic"></i></>}
             </button>
           </div>
 
@@ -115,8 +136,28 @@ function AISmartPosts() {
               <div style={{ background: 'rgba(0,0,0,0.3)', padding: '2rem', borderRadius: '15px', minHeight: '300px', color: '#fff', lineHeight: '1.8', marginBottom: '2.5rem', whiteSpace: 'pre-wrap', width: '100%', border: '1px solid rgba(255,255,255,0.1)' }}>
                 {result}
               </div>
-              <button className="btn-christmas-premium" onClick={saveAsPost} style={{ background: 'var(--christmas-green)', width: '100%' }}>
-                SHARE AS GIFT <i className="fas fa-snowflake"></i>
+              <button
+                className="btn-christmas-premium"
+                onClick={saveAsPost}
+                disabled={sending}
+                style={{
+                  background: 'linear-gradient(45deg, #ffd700, #ff8c00)',
+                  width: '100%',
+                  color: '#000',
+                  fontWeight: '800',
+                  boxShadow: '0 0 20px rgba(255, 215, 0, 0.4)',
+                  border: '1px solid rgba(255,255,255,0.5)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: '10px',
+                  opacity: sending ? 0.7 : 1,
+                  cursor: sending ? 'wait' : 'pointer'
+                }}
+              >
+                {sending ? 'Sending Gift...' : 'Send as Gift'} <i className="fas fa-gift" style={{ fontSize: '1.2rem' }}></i>
               </button>
             </div>
           )}

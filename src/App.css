@@ -26,7 +26,7 @@ body {
     background-color: var(--midnight-blue);
     color: var(--text-color);
     overflow-x: hidden;
-    cursor: none !important;
+    /* cursor: none !important; - Temporarily removed for usability check */
 }
 
 .app {

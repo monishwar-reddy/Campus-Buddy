@@ -19,6 +19,12 @@ import Flashcards from './pages/features/Flashcards'
 import Leaderboard from './pages/features/Leaderboard'
 import Projects from './pages/features/Projects'
 
+// Games
+import GamesPortal from './pages/GamesPortal'
+import TicTacToe from './pages/games/TicTacToe'
+import Pong from './pages/games/Pong'
+import Mario from './pages/games/Mario'
+
 import './App.css'
 import './components/ChristmasTheme/ChristmasTheme.css'
 import Snowfall from './components/ChristmasTheme/Snowfall'
@@ -53,8 +59,13 @@ function AppContent() {
           <Route path="/features/leaderboard" element={<Leaderboard />} />
           <Route path="/features/projects" element={<Projects />} />
 
-          {/* Fun Game */}
-          <Route path="/game" element={<PacManGame />} />
+          {/* Game Routes */}
+          <Route path="/games" element={<GamesPortal />} />
+          <Route path="/games/santa-dash" element={<PacManGame />} />
+          <Route path="/game" element={<PacManGame />} /> {/* Legacy Redirect */}
+          <Route path="/games/tic-tac-toe" element={<TicTacToe />} />
+          <Route path="/games/pong" element={<Pong />} />
+          <Route path="/games/mario" element={<Mario />} />
 
           {/* Contact Us */}
           <Route path="/contact" element={<ContactUs />} />

@@ -1,7 +1,7 @@
 import { useState, useContext, useRef, useEffect } from 'react'
 import { UserContext } from '../../context/UserContext'
 
-const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY
+import { callGemini } from '../../utils/gemini'
 
 function AIChatbot() {
   const { user } = useContext(UserContext)
@@ -30,26 +30,9 @@ function AIChatbot() {
     setLoading(true)
 
     try {
-      if (!GEMINI_API_KEY) {
-        throw new Error('AI Assistant is currently frosty. Please refresh!')
-      }
-
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `You are a helpful campus assistant. Answer this question clearly and concisely:\n\n${userMessage}`
-            }]
-          }]
-        })
-      })
-
-      if (!response.ok) throw new Error(`API Error: ${response.status}`)
-      const data = await response.json()
-      const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I couldn\'t process that.'
-      setMessages(prev => [...prev, { role: 'ai', text: aiResponse }])
+      const systemPrompt = `You are a helpful campus assistant. Answer this question clearly and concisely:\n\n${userMessage}`;
+      const aiResponse = await callGemini(systemPrompt);
+      setMessages(prev => [...prev, { role: 'ai', text: aiResponse || "Sorry, I couldn't process that." }])
     } catch (error) {
       setMessages(prev => [...prev, { role: 'ai', text: `Error: ${error.message}.` }])
     } finally {

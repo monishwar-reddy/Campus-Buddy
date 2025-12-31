@@ -18,13 +18,36 @@ function PostDetail() {
   }, [id])
 
   const fetchPost = async () => {
-    const { data, error } = await supabase.from('posts').select('*').eq('id', id).single()
-    if (!error) setPost(data)
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (error) {
+        console.log("No such document or error:", error)
+      } else {
+        setPost(data)
+      }
+    } catch (e) {
+      console.error("Error getting document:", e)
+    }
   }
 
   const fetchComments = async () => {
-    const { data, error } = await supabase.from('comments').select('*').eq('post_id', id).order('created_at', { ascending: true })
-    if (!error) setComments(data || [])
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('post_id', id)
+        .order('created_at', { ascending: true })
+
+      if (error) throw error
+      setComments(data || [])
+    } catch (e) {
+      console.error("Error fetching comments:", e)
+    }
   }
 
   const handleLike = async () => {
@@ -41,23 +64,53 @@ function PostDetail() {
       likedPosts[likeKey] = true
     }
     localStorage.setItem('likedPosts', JSON.stringify(likedPosts))
-    const { error } = await supabase.from('posts').update({ likes: newLikes }).eq('id', id)
-    if (!error) fetchPost()
+
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .update({ likes: newLikes })
+        .eq('id', id)
+
+      if (error) throw error
+      setPost(prev => ({ ...prev, likes: newLikes }))
+    } catch (e) {
+      console.error("Error liking post:", e)
+    }
   }
 
   const handleComment = async (e) => {
     e.preventDefault()
     if (!user) { alert('Please login to comment'); return }
     if (!newComment.trim()) return
-    const { error } = await supabase.from('comments').insert([{ post_id: id, author: user.username, content: newComment }])
-    if (!error) { setNewComment(''); fetchComments() }
+
+    try {
+      const { error } = await supabase
+        .from('comments')
+        .insert([{
+          post_id: id,
+          author: user.username,
+          content: newComment
+          // created_at handled by default
+        }])
+
+      if (error) throw error
+      setNewComment('')
+      fetchComments()
+    } catch (e) {
+      console.error("Error adding comment:", e)
+    }
   }
 
   const handleDelete = async () => {
     if (!user || user.username !== post.author) { alert('You can only delete your own posts'); return }
     if (window.confirm('Delete this post?')) {
-      const { error } = await supabase.from('posts').delete().eq('id', id)
-      if (!error) navigate('/')
+      try {
+        const { error } = await supabase.from('posts').delete().eq('id', id)
+        if (error) throw error
+        navigate('/')
+      } catch (e) {
+        console.error("Error deleting post:", e)
+      }
     }
   }
 
@@ -71,28 +124,56 @@ function PostDetail() {
       <div className="page-overlay"></div>
 
       <div className="container" style={{ position: 'relative', zIndex: 10, paddingTop: '4rem', maxWidth: '800px' }}>
-        <div className="glass-card-3d" style={{ padding: '3rem', background: 'rgba(255,255,255,0.05)', marginBottom: '3rem' }}>
+        {/* Simplified "Normal" Card Style */}
+        <div style={{
+          padding: '3rem',
+          background: '#0a192f', // Solid dark background
+          border: '1px solid #ffd700',
+          borderRadius: '15px',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+          marginBottom: '3rem'
+        }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-            <span style={{ padding: '5px 15px', background: 'rgba(255,215,0,0.2)', color: '#ffd700', borderRadius: '50px', fontSize: '0.9rem' }}>{post.category}</span>
-            <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>📅 {new Date(post.created_at).toLocaleDateString()}</span>
+            <span style={{ padding: '5px 15px', background: 'rgba(255,215,0,0.1)', color: '#ffd700', borderRadius: '50px', fontSize: '0.9rem', border: '1px solid #ffd700' }}>{post.category}</span>
+            <span style={{ fontSize: '0.9rem', opacity: 0.7, color: '#ccd6f6' }}>📅 {post.created_at ? new Date(post.created_at).toLocaleDateString() : new Date().toLocaleDateString()}</span>
           </div>
 
-          <h1 style={{ fontSize: '3.5rem', fontFamily: "'Mountains of Christmas', cursive", color: '#ffd700', marginBottom: '1.5rem' }}>{post.title}</h1>
+          <h1 style={{ fontSize: '2.5rem', fontFamily: "sans-serif", fontWeight: 'bold', color: '#e6f1ff', marginBottom: '1.5rem' }}>{post.title}</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.author}`} alt="" style={{ width: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
-            <span style={{ fontWeight: 'bold' }}>Gifted by: {post.author}</span>
+            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${post.author}`} alt="" style={{ width: '40px', borderRadius: '50%', background: '#112240' }} />
+            <span style={{ fontWeight: 'bold', color: '#8892b0' }}>Author: {post.author}</span>
           </div>
 
           {post.summary && (
-            <div style={{ background: 'rgba(212, 20, 90, 0.1)', borderLeft: '4px solid #d4145a', padding: '1.5rem', marginBottom: '2rem', borderRadius: '10px' }}>
-              <strong style={{ color: '#d4145a', display: 'block', marginBottom: '0.5rem' }}>❄️ Winter AI Summary:</strong>
-              <p style={{ margin: 0, opacity: 0.9, fontStyle: 'italic' }}>{post.summary}</p>
+            <div style={{ background: 'rgba(100, 255, 218, 0.1)', borderLeft: '4px solid #64ffda', padding: '1.5rem', marginBottom: '2rem', borderRadius: '4px' }}>
+              <strong style={{ color: '#64ffda', display: 'block', marginBottom: '0.5rem' }}>AI Summary:</strong>
+              <p style={{ margin: 0, opacity: 0.9, fontStyle: 'italic', color: '#e6f1ff' }}>{post.summary}</p>
             </div>
           )}
 
-          <div style={{ fontSize: '1.2rem', lineHeight: '1.8', marginBottom: '3rem', whiteSpace: 'pre-wrap' }}>
-            {post.content}
-          </div>
+          {/* Logic to handle Content Injection (Schema Bypass) */}
+          {(() => {
+            const [displayContent, embeddedImg] = (post.content || '').split('|||IMG|||');
+            const finalImg = embeddedImg || post.image_url;
+
+            return (
+              <>
+                <div style={{ fontSize: '1.2rem', lineHeight: '1.8', marginBottom: '3rem', whiteSpace: 'pre-wrap' }}>
+                  {displayContent}
+                </div>
+
+                {finalImg && (
+                  <div style={{ marginBottom: '3rem', borderRadius: '15px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    <img
+                      src={finalImg}
+                      alt={post.title}
+                      style={{ width: '100%', height: 'auto', display: 'block', maxHeight: '500px', objectFit: 'cover' }}
+                    />
+                  </div>
+                )}
+              </>
+            );
+          })()}
 
           <div style={{ display: 'flex', gap: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2rem' }}>
             <button
@@ -110,19 +191,55 @@ function PostDetail() {
           </div>
         </div>
 
-        <div className="glass-card-3d" style={{ padding: '2.5rem', background: 'rgba(46, 139, 87, 0.05)' }}>
-          <h3 style={{ fontSize: '2rem', fontFamily: "'Mountains of Christmas', cursive", color: '#ffd700', marginBottom: '2rem' }}>💬 Holiday Cheer ({comments.length})</h3>
+        <div style={{
+          padding: '2.5rem',
+          background: '#1e293b', // Standard Slate Grey (Dark Mode)
+          border: '1px solid #334155',
+          borderRadius: '12px',
+          marginTop: '3rem',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{ fontSize: '1.5rem', fontFamily: "sans-serif", fontWeight: '600', color: '#f8fafc', marginBottom: '1.5rem' }}>Comments ({comments.length})</h3>
 
           {user && (
-            <form onSubmit={handleComment} style={{ marginBottom: '3rem' }}>
+            <form onSubmit={handleComment} style={{ marginBottom: '2rem' }}>
               <textarea
-                placeholder="Write a festive comment..."
+                placeholder="Write a comment..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 rows="3"
-                style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '1rem', borderRadius: '15px', resize: 'none', outline: 'none', marginBottom: '1rem' }}
+                style={{
+                  width: '100%',
+                  background: '#ffffff', // Standard White Input
+                  border: '1px solid #cbd5e1',
+                  color: '#0f172a',
+                  padding: '1rem',
+                  borderRadius: '8px',
+                  resize: 'none',
+                  outline: 'none',
+                  marginBottom: '1rem',
+                  fontSize: '1rem'
+                }}
               />
-              <button type="submit" className="btn-christmas-premium" style={{ width: '100%', fontSize: '1rem' }}>POST COMMENT ❄️</button>
+              <button
+                type="submit"
+                style={{
+                  width: '100%',
+                  fontSize: '1rem',
+                  padding: '0.75rem',
+                  background: '#3b82f6', // Standard Blue Button
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.background = '#2563eb'}
+                onMouseOut={(e) => e.target.style.background = '#3b82f6'}
+              >
+                Post Comment
+              </button>
             </form>
           )}
 
@@ -133,7 +250,7 @@ function PostDetail() {
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 'bold', color: '#ffd700', marginBottom: '0.4rem' }}>{comment.author}</div>
                   <p style={{ margin: 0, opacity: 0.9 }}>{comment.content}</p>
-                  <div style={{ fontSize: '0.75rem', opacity: 0.5, marginTop: '0.8rem' }}>{new Date(comment.created_at).toLocaleString()}</div>
+                  <div style={{ fontSize: '0.75rem', opacity: 0.5, marginTop: '0.8rem' }}>{comment.created_at ? new Date(comment.created_at).toLocaleString() : ''}</div>
                 </div>
               </div>
             ))}
