@@ -81,4 +81,7 @@ https://campus-connect-183.firebaseapp.com/
 
 - Christmas background.
 - And more
+- 
+## License
+This project is licensed under the MIT License.
 
